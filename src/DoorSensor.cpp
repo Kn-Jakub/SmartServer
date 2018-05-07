@@ -6,9 +6,8 @@
 
 /* 
  * File:   DoorSensor.cpp
- * Author: jakub
+ * Author: Jakub Pekar
  * 
- * Created on April 3, 2018, 9:06 AM
  */
 
 #include "DoorSensor.h"
@@ -17,35 +16,36 @@
 DoorSensor::DoorSensor(Socket* socketDescriptor,
             std::string pName,
             bool *pAlarmActive,
-        Condition *pAlarm,
+            Condition *pAlarm,
             Condition *paCondition, 
             MySQL *paConnectToState) 
 :m_connectorToStateDB(paConnectToState),
-m_alarm(pAlarm){
+conIsDisconnect(paCondition),
+m_alarm(pAlarm),
+alarmActive(pAlarmActive){
     modulSock = socketDescriptor;
-    conIsDisconnect = paCondition;
     name = pName;
-    alarmActive = pAlarmActive;
     clientDisconnected = false;
 
     StartInternalThread();
 }
-
+/*
+ * Funkcia hlavneho vlakna v ktorej objekt prijima signal pri zmene na senzore
+ */
 void DoorSensor::threadMain() {
     uint8_t buffer[BUFF_BIG_LENGTH];
     string sendingBF;
     LOG_INFO("Door::(", name, ")obdrzal som meno: ", name);
 
-    //buffer[0] = ANS_ACK;
     sendingBF = std::string(1,ANS_ACK);
     sendingBF += name;
     modulSock->send((uint8_t*) sendingBF.c_str(), sendingBF.size());
     
-    /*Connecting of TmpSensor to the state database*/
+    /*Pripojenie DoorSensora a zapis do databazy*/
     if (m_connectorToStateDB->insertTo(string(DBTAB_MVM_MODULES), name, true)) {
-        LOG_DEBUG("Door:: (", name, ") Set the State in the state Database");
+        LOG_DEBUG("Door:: (", name, ") Nastavujem stav v state databaze");
     } else {
-        LOG_DEBUG("Door:: (", name, ") Create new row in the table of state");
+        LOG_DEBUG("Door:: (", name, ") Vytvaram novy riadok v state databaze");
     }
 
     while (!clientDisconnected) {
@@ -53,20 +53,16 @@ void DoorSensor::threadMain() {
             LOG_DEBUG("Door:: (", name, ") prijata sprava: ",to_string(*buffer));
             if (*alarmActive) {
                 LOG_WARN("Door:: (", name, ") Alarm Active");
-                m_alarm->signal();
-                
-            } else {
-                
-            }
+                m_alarm->signal(); 
+            } 
         } else {
             clientDisconnected = true;
         }
 
     }
-    LOG_INFO("Door:: (", name, ") Client unconnected");
+    LOG_INFO("Door:: (", name, ") Modul odpojeny");
     conIsDisconnect->signal();
 }
-
 
 DoorSensor::~DoorSensor() {
 }

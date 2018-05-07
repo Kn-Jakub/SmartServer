@@ -22,12 +22,11 @@
 typedef struct ServerGlobalData{
     bool *g_serverWork;
     bool *g_alarmActive;
-    Mutex *g_controlMutex;
-    Condition *g_controlCondition;
+   // Mutex *g_controlMutex;
+   // Condition *g_controlCondition;
     MySQL *g_conStateDB;
     uint16_t* timeForLight;
     
-    /*Vectors of modules*/
 }SERVER_DATA;
 
 

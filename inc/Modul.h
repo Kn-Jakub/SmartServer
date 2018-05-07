@@ -17,32 +17,30 @@
 #include <string>
 #include "Socket.h"
 #include "../lbr_c++/definitions.h"
-class Modul
-{
-protected:
-    Socket *modulSock;
-    string name;
-    //string ipAddr;
-    bool clientDisconnected;
-public:
-    Modul() {}
-    /*
-    void SetIpAddr(string ipAddr) {
-        this->ipAddr = ipAddr;
-    }
 
-    void SetModulSock(Socket modulSock) {
-        this->modulSock = modulSock;
+class Modul {
+public:
+    Modul(){};
+    /**
+    * Function returns value of atribute clientDocsonnect
+    * @return bool of connection state
+    */
+    bool isClientDisconnected() const {
+        return clientDisconnected;
     }
-*/  bool isClientDisconnected() const { return clientDisconnected;}
+    /**
+    * Function set the name of object
+    * @param name - setted name
+    */
     void SetName(string name) {
         this->name = name;
     }
-    
 
-
-    ~Modul(){ }
-
+    ~Modul(){};
+protected:
+    Socket *modulSock;
+    string name;
+    bool clientDisconnected;
 };
 
 #endif /* MODUL_H */

@@ -23,14 +23,14 @@ MVMSensor::MVMSensor(Socket* socketDescriptor, std::string pName, bool* pAlarmAc
 : m_connectorToStateDB(paConnectToState),
 conIsDisconnect(paCondition),
 controledLights(),
-        m_lightServer(pLightServer),
-        alarm(pAlarm),
+m_lightServer(pLightServer),
+alarm(pAlarm),
 timeForLight(pTimeForLight),
-        alarmActive(pAlarmActive)
+alarmActive(pAlarmActive)
 {
-        modulSock = socketDescriptor;
+    modulSock = socketDescriptor;
     name = pName;
-         clientDisconnected = false;
+    clientDisconnected = false;
     StartInternalThread();
 }
 
@@ -44,9 +44,9 @@ void MVMSensor::threadMain() {
 
     /*Connecting of MVMSensor to the state database*/
     if (m_connectorToStateDB->insertTo(string(DBTAB_MVM_MODULES), name, true)) {
-        LOG_DEBUG("MVMS:: (", name, ") Set the State in the state Database");
+        LOG_DEBUG("MVMS:: (", name, ") Nastavujem stav v state databaze");
     } else {
-        LOG_DEBUG("MVMS:: (", name, ") Create new row in the table of state");
+        LOG_DEBUG("MVMS:: (", name, ") Vytvorena novy riadok v tabulke");
     }
 
     while (!clientDisconnected) {
@@ -61,7 +61,7 @@ void MVMSensor::threadMain() {
                     buffer[1] = 0;
                     buffer[2] = 0;
                     modulSock->send(buffer, 3);
-                    LOG_TRACE("MVMS:: (", name, ") Send time light)");
+                    LOG_TRACE("MVMS:: (", name, ") Odosiela cas o neaktivite");
                 }
 
             } else {
@@ -71,7 +71,7 @@ void MVMSensor::threadMain() {
                     }
                     memcpy(buffer + 1, timeForLight, sizeof (uint16_t));
                     modulSock->send(buffer, 3);
-                    LOG_INFO("MVMS:: (", name, ") Sensor is active turn on light (", to_string(*timeForLight), ")");
+                    LOG_INFO("MVMS:: (", name, ")Senzor aktivny, zapina svetlo (", to_string(*timeForLight), ")");
 
                 } else if (buffer[0] == 131) {
                     for (int i = (controledLights.size() - 1); i >= 0; i--) {
@@ -86,7 +86,7 @@ void MVMSensor::threadMain() {
         }
 
     }
-    LOG_INFO("MVMS:: (", name, ") Client unconnected");
+    LOG_INFO("MVMS:: (", name, ") Modul odpojeny");
     conIsDisconnect->signal();
 }
 

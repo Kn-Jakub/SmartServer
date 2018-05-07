@@ -6,9 +6,8 @@
 
 /* 
  * File:   DoorSensor.h
- * Author: jakub
+ * Author: Jakub Pekar
  *
- * Created on April 3, 2018, 9:06 AM
  */
 
 #ifndef DOORSENSOR_H
@@ -20,26 +19,32 @@
 #include "Thread.h"
 #include "Modul.h"
 #include "LightServer.h"
-//#include "Light.h"
 
-class DoorSensor: public Thread, Modul {
-private:
-    MySQL *m_connectorToStateDB;
-    Condition *conIsDisconnect;
-    Condition *m_alarm;
-    bool *alarmActive;
+class DoorSensor : public Thread, Modul {
 public:
     DoorSensor(Socket* socketDescriptor,
             std::string pName,
             bool *pAlarmActive,
             Condition *pAlarm,
-            Condition *paCondition, 
+            Condition *paCondition,
             MySQL *paConnectToState);
+    virtual void threadMain();
     DoorSensor(const DoorSensor& orig) = delete;
     virtual ~DoorSensor();
-    string getName() const {    return name;    }
+
+    /**
+     * Function for get name of modul
+     * @return string of name
+     */
+    std::string getName() const {
+        return name;
+    }
+
 private:
-   virtual void threadMain();
+    MySQL *m_connectorToStateDB;
+    Condition *conIsDisconnect;
+    Condition *m_alarm;
+    bool *alarmActive;
 };
 
 #endif /* DOORSENSOR_H */

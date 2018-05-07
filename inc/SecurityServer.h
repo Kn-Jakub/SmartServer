@@ -38,11 +38,22 @@ private:
     uint16_t* m_timeForLight;
 public:
     SecurityServer(bool *pServerWork,Condition *alarm, bool *pAlarmActive,LightServer *pLightServer, uint16_t *pTimeForLight, MySQL *pConnector);
+    virtual ~SecurityServer();
+    /**
+    * Function asigns the light to mvm module
+    * @param sensorName - name of mvm module
+    * @param lightName - name of light module
+    * @return true if add is successful, false otherwise
+    */
+    bool addConection(std::string sensorName, std::string lightName);
+    /**
+    * Function set the state of lights on the module
+    * @param lightName - name of light  module
+    * @return true if remove is successful, false otherwise
+    */
+    bool removeConnection(std::string lightName);
     
     SecurityServer(const SecurityServer& orig) = delete;
-    virtual ~SecurityServer();
-    bool addConection(std::string SensorName, std::string lightName);
-    bool removeConnection(std::string name);
 private:
     virtual void threadMain();
     virtual void threadControl();

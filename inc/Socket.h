@@ -21,36 +21,55 @@
 using namespace std;
 
 class Socket {
-private:
-    int port;
-    int sock;
+
     
 public:
     Socket(int port);
     Socket(int port, int socketDescriptor);
     Socket(int port, char* address,bool *connectSucces);
-    
-private:
-    Socket(const Socket& orig);
-    void operator=(const Socket &right);
-    
-    
-public:
-    //int getPort() const {return port;}
+  
+    Socket(const Socket& orig) = delete;
+    void operator=(const Socket &right) = delete;   
+    /**
+    * Function return the socket value
+    * @return socket descriptor
+    */
     int getSocket() const {return sock;}
-    void setSock(int sock) {
-        this->sock = sock;
-    }
-    bool setSocketBlockingEnabled(int fd, bool blocking);
-   
+      /**
+    * Function set the socket value
+    * @param sock - new value of socket descriptor
+    */
+    void setSock(int sock) { this->sock = sock;}
+      /**
+    * Function set server socket to listening state
+    */
     void serverListen();
+      /**
+    * Function accepted the client request
+    * @return socket descriptor of client
+    */
     int connectClient();
+      /**
+    * Function sends data from server to client
+    * @param buffer - pointer on the sending data
+    * @param size - count of sending bytes
+    */
     void send(void *buffer, uint16_t size);
+    /**
+    * Function receives data from client
+    * @param buffer - pointer on the receiving data
+    * @param size - size of max receiving bytes
+    * @return count of receiving bytes
+    */
     int recieve(void *buffer, uint16_t size);
-    
+    /**
+    * Function function set the socket to the inactiv mode. Socket can`t send or receive data.
+    */
     void shutdownSock();
     ~Socket();
 private:
+    int port;
+    int sock;
     
 
 };

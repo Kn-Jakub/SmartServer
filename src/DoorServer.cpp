@@ -11,22 +11,26 @@
  */
 
 #include "DoorServer.h"
-
 #include "Logger.h"
 
 DoorServer::DoorServer(bool *pServerWork, bool *pAlarmActive, Condition *pAlarm, MySQL *pConnector) 
-:m_alarm(pAlarm){
-    m_serverSocket = new Socket(PORT_DOOR_SENZOR);
-    m_conIsDisconnect = new Condition();
-    m_mutex = new Mutex();
-    m_connectorToStateDb = pConnector;
-    serverWork = pServerWork;
-    alarmActive = pAlarmActive;
+:m_serverSocket(new Socket(PORT_DOOR_SENZOR)),
+
+m_mutex(new Mutex()),
+m_conIsDisconnect(new Condition()),
+m_connectorToStateDb(pConnector),
+        m_alarm(pAlarm),
+        sensors(),
+        serverWork(pServerWork),
+        alarmActive(pAlarmActive)
+{
     StartInternalThread();
     StartControlThread();
     LOG_DEBUG("DoorServer: server vytvoreny");
 }
-
+/*
+ * Metoda hlavneho vlakna pre obsluhu klientov
+ */
 void DoorServer::threadMain() {
     m_serverSocket->serverListen();
     Socket *clientSocket;
@@ -79,7 +83,9 @@ void DoorServer::threadMain() {
     LOG_INFO("DoorServer:: Ukoncujem threadMain");
     m_conIsDisconnect->signal();
 }
-
+/*
+ * Metoda kontrolneho vlakna, ktore odstranuje neaktivne moduly z vektora
+ */
 void DoorServer::threadControl() {
      m_mutex->lock();
     while (*serverWork) {

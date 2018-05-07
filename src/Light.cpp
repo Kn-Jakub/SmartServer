@@ -21,11 +21,12 @@
 #include "Logger.h"
 
 Light::Light(Socket *socketClient,string recvName, Condition *paConIsDisconnect, MySQL *paConnectorState)
-:connectorToState(paConnectorState) {
+:lightOn(false),
+lightColor(""),
+conIsDisconnect(paConIsDisconnect),      
+connectorToState(paConnectorState) {
     name = recvName;
     clientDisconnected = false;
-    conIsDisconnect = paConIsDisconnect;
-    lightOn = false;
     modulSock = socketClient;
     StartInternalThread();
 }
@@ -94,7 +95,6 @@ bool Light::sendAlert() {
     string sendBuffer(1, (char) LIGHT_ALERT);
     LOG_WARN("LIGHT:: (", name, ") *ALARM ACTIV ALERT*");
     modulSock->send((char*) sendBuffer.c_str(), sendBuffer.size());
-    //modulSock->recieve(buffer, BUFF_LENGTH);
     return true;
 }
 bool Light::setAlarm(bool start) {

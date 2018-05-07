@@ -21,7 +21,7 @@
 #include <unistd.h>
 #include <cerrno>
 #include <cstring>
-#include "ServerExceptions.h"
+//#include "ServerExceptions.h"
 #include "Socket.h"
 #include "Logger.h"
 
@@ -65,13 +65,13 @@ Socket::Socket(int paPort, char* address, bool* connectSuccess) : port(paPort) {
     }
     struct hostent* server = gethostbyname(address);
     if (server == NULL) {
-        LOG_ALL("[Socket]CONNECTING::Can`t connect to server");
+        LOG_ERROR("[Socket]CONNECTING::Can`t connect to server");
         *connectSuccess = false;
     } //printError("Server does not exist.");
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {
-        LOG_ALL("[Socket]create::Can`t create socket");
+        LOG_ERROR("[Socket]create::Can`t create socket");
         *connectSuccess = false;
     }//printError("ERROR - socket.");
 
@@ -85,9 +85,7 @@ Socket::Socket(int paPort, char* address, bool* connectSuccess) : port(paPort) {
         LOG_ALL("[Socket]ERROR - connect.");
         *connectSuccess = false;
     } else {
-        *connectSuccess = true
-                ;
-
+        *connectSuccess = true;
         LOG_INFO("[Socket]Connecting to server - successfully.");
     }
 }
@@ -95,8 +93,6 @@ Socket::Socket(int paPort, char* address, bool* connectSuccess) : port(paPort) {
 Socket::Socket(int port, int socketDescriptor) : port(port), sock(socketDescriptor) {
 }
 
-Socket::Socket(const Socket& orig) {
-}
 
 void Socket::serverListen() {
     listen(sock, 10);
@@ -105,7 +101,6 @@ void Socket::serverListen() {
 
 int Socket::connectClient() {
     int socketClient;
-    //bool connect = true;
 
     try {
         struct sockaddr_in clientAdresa;
@@ -125,14 +120,10 @@ int Socket::connectClient() {
 
 void Socket::send(void *buffer, uint16_t size) {
     LOG_TRACE("SOCKET_SEND::(", sock, ")");
-    //for (int i = 0; i < size; i++)
     write(sock, buffer, size);
 }
 
 int Socket::recieve(void *buffer, uint16_t size) {
-   
-    
-
     int valread = read(sock, buffer, size);
     return valread;
 }

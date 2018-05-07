@@ -17,21 +17,34 @@
 #include <pthread.h>
 
 class Mutex {
-private:
-    pthread_mutex_t pMutex;
 public:
-    Mutex(){
-        pthread_mutex_init(&pMutex,NULL);
+
+    Mutex() {
+        pthread_mutex_init(&pMutex, NULL);
     }
-    inline void lock(){
+
+    /**
+     * Function lock assigned mutex
+     */
+    inline void lock() {
         pthread_mutex_lock(&pMutex);
     }
-    inline void tryLock(){
+
+    inline void tryLock() {
         pthread_mutex_trylock(&pMutex);
     }
-    inline void unlock(){
+
+    /**
+     * Function unlock assigned mutex
+     */
+    inline void unlock() {
         pthread_mutex_unlock(&pMutex);
     }
+
+    /**
+     * Function returns the pointer to the mutex
+     * @return mutex pointer
+     */
     pthread_mutex_t* getMutex() {
         return &pMutex;
     }
@@ -39,5 +52,7 @@ public:
     ~Mutex() {
         pthread_mutex_destroy(&pMutex);
     }
+private:
+    pthread_mutex_t pMutex;
 };
 #endif /* MUTEX_H */

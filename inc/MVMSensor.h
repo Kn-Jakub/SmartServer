@@ -23,7 +23,40 @@
 
 #include <vector>
 
-class MVMSensor: public Thread, Modul {
+class MVMSensor : public Thread, Modul {
+public:
+    MVMSensor(Socket* socketDescriptor,
+            std::string pName,
+            bool *pAlarmActive,
+            uint16_t* pTimeForLight,
+            LightServer *pLightServer,
+            Condition *alarm,
+            Condition *paCondition,
+            MySQL *paConnectToState);
+    virtual ~MVMSensor();
+
+    /**
+     * Function returns name of module
+     * @return const string name of module
+     */
+    string getName() const {
+        return name;
+    }
+    /**
+    * Function adds name of ligth which will be switched by this sensor
+    * @param light - name of light
+    * @return true if set is successful, false otherwise
+    */
+    void addLight(std::string light);
+    /**
+    * Function removes name of ligth from vector, which will be switched by this sensor
+    * @param light - name of light
+    * @return true if set is successful, false otherwise
+    */
+    bool removeLight(std::string& pName);
+    MVMSensor(const MVMSensor& orig) = delete;
+private:
+    virtual void threadMain();
 private:
     MySQL *m_connectorToStateDB;
     Condition *conIsDisconnect;
@@ -32,23 +65,6 @@ private:
     Condition *alarm;
     uint16_t *timeForLight;
     bool *alarmActive;
-public:
-    MVMSensor(Socket* socketDescriptor,
-            std::string pName,
-            bool *pAlarmActive,
-            uint16_t* pTimeForLight,
-            LightServer *pLightServer,
-            Condition *alarm,
-            Condition *paCondition, 
-            MySQL *paConnectToState);
-    MVMSensor(const MVMSensor& orig) = delete;
-    virtual ~MVMSensor();
-    string getName() const {    return name;    }
-    
-    void addLight(std::string light);
-    bool removeLight(std::string& pName);
-private:
-   virtual void threadMain();
 
 };
 

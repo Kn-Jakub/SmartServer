@@ -17,13 +17,13 @@
 
 SecurityManager::SecurityManager(bool *pServerWork,bool *pAlarmActive,LightServer *pLServer,MySQL *pConnector, Condition *runAlarm)
 :m_serverWork(pServerWork),
+m_alarmActive(pAlarmActive),
 m_ligthServer(pLServer),
+m_runAlarm(runAlarm),
+m_alarmMutex(new Mutex()),
+counterOfReactionAlarm(30),
 m_connetorToStateDB(pConnector)
 {
-    counterOfReactionAlarm = 30;
-    m_alarmActive = pAlarmActive;
-    m_alarmMutex = new Mutex();
-    m_runAlarm = runAlarm;
     StartInternalThread();
 }
 
@@ -72,9 +72,6 @@ void SecurityManager::setAlarmState(bool state) {
 void SecurityManager::setReactionTime(uint16_t time) {
     counterOfReactionAlarm = time;
 }
-
-
-
 
 SecurityManager::~SecurityManager() {
     WaitForInternalThreadToExit();

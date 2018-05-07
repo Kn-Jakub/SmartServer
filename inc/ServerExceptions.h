@@ -18,11 +18,6 @@
 extern "C" {
 #endif
 
-#define EX_PORT_WRONG_NUMBER    1
-#define EX_SOCK_CREATING        2
-#define EX_BIND                 3
-#define EX_ACCEPT               4
-#define EX_SOCK_ACCEPT          5
 
 #ifdef __cplusplus
 }

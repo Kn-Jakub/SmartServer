@@ -24,16 +24,15 @@
 
 TmpSenzor::TmpSenzor(Socket* clientSocket,std::string pName, Condition *paCondition, MySQL *paConnector,MySQL *paConnectToState, int paSerSocket2)
 : connectorToTmpDb(paConnector),
-connectorToStateDb(paConnectToState){
+connectorToStateDb(paConnectToState),
+conIsDisconnect(paCondition),
+sendPeriod(5),
+clientSocket2(new Socket(PORT_TMP_2,paSerSocket2)){
     // Connecting of Second socket TMP
     modulSock = clientSocket;
     this->name = pName;
-    clientSocket2 = new Socket(PORT_TMP_2,paSerSocket2);
     clientDisconnected = false;
-    conIsDisconnect = paCondition;
-    
     StartInternalThread();
-
 }
 
 void TmpSenzor::threadMain() {
@@ -56,16 +55,16 @@ void TmpSenzor::threadMain() {
     clientSocket2->send(buffer,sendingBF.size());
     /*Connecting of TmpSensor to the state database*/
      if (connectorToStateDb->insertTo(string(DBTAB_TEMP_MODULES),name,true)) {
-        LOG_INFO("TMPSEN:: (" , name , ") Set the State in the state Database");
+        LOG_INFO("TMPSEN:: (" , name , ") Nastavenie stavu v state databaze");
     } else {
-        LOG_INFO("TMPSEN:: (", name , ") Create new row in the table of state");
+        LOG_INFO("TMPSEN:: (", name , ") Vytvorenie noveho riadku v state tabulke");
     }
     
     /*Connecting of TmpSenzor to the table of Temperature database*/
     if (connectorToTmpDb->createTable(name)) {
-        LOG_INFO("TMPSEN:: (" , name , ") connected to database");
+        LOG_INFO("TMPSEN:: (" , name , ") Pripojeny do existujucej databazy teplot");
     } else {
-        LOG_INFO("TMPSEN:: (", name , ") table for sensor was created");
+        LOG_INFO("TMPSEN:: (", name , ") tabulka teplot bola vytvorena");
     }
 
     while (!clientDisconnected) {
@@ -73,16 +72,6 @@ void TmpSenzor::threadMain() {
         TMPData receivingData;
         if (modulSock->recieve(buffer, BUFF_LENGTH) > 0) {
             memcpy(&receivingData,buffer,sizeof(receivingData));
-            /*
-            recvMsg = string(buffer+1);
-            pos = recvMsg.find(delimeter);
-            temp = stod(recvMsg.substr(0, pos));
-            recvMsg.erase(0, pos + 1);
-            hum = stod(recvMsg);
-            //modulSock->send(&sendPeriod,1);
-             * */
-            
-            //cout << "Prijata teplota" << receivingData.temperature << " vlhkost " << receivingData.humidity <<endl;
             connectorToTmpDb->insertTo(name,receivingData);
             
         } else {
@@ -91,16 +80,12 @@ void TmpSenzor::threadMain() {
 
     }
     LOG_INFO("TMPSEN::(",name,")Klient sa odpojil vlakno sa  ukoncuje");
-    //servSocket2->shutdownSock();
-    delete servSocket2;
     delete clientSocket2;
     conIsDisconnect->signal();
 }
 
 void TmpSenzor::setPeriod(uint32_t period) {
-    //std::vector<uint8_t> sendData;
     uint8_t buff[10];
-    
     if(period){
         buff[0]=TMP_SET_PERIOD;
         memcpy(buff+1,&period,sizeof(period));
@@ -138,7 +123,7 @@ TmpSenzor::~TmpSenzor() {
     
     WaitForInternalThreadToExit();
      if (connectorToStateDb->insertTo(string(DBTAB_TEMP_MODULES),name,false)) {
-        LOG_INFO("TMPSEN:: (" , name , ") Set the State in the state Database(false)");
+        LOG_INFO("TMPSEN:: (" , name , ") Nastaveny stav neaktivity v state databaze(false)");
         
     } else {
         LOG_INFO("TMPSEN:: (", name , ") Some Error");

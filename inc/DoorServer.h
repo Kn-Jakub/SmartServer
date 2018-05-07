@@ -8,7 +8,6 @@
  * File:   DoorServer.h
  * Author: jakub
  *
- * Created on April 6, 2018, 11:44 AM
  */
 
 #ifndef DOORSERVER_H
@@ -22,8 +21,16 @@
 #include "LightServer.h"
 #include <vector>
 
-class DoorServer: public Thread {
-    private:
+class DoorServer : public Thread {
+
+public:
+    DoorServer(bool *pServerWork, bool *pAlarmActive, Condition *alarm, MySQL *pConnector);
+    DoorServer(const DoorServer& orig) = delete;
+    virtual ~DoorServer();
+private:
+    virtual void threadMain();
+    virtual void threadControl();
+private:
     Socket *m_serverSocket;
     Mutex *m_mutex;
     Condition *m_conIsDisconnect;
@@ -31,15 +38,7 @@ class DoorServer: public Thread {
     Condition *m_alarm;
     std::vector<DoorSensor*> sensors;
     bool *serverWork;
-    bool *alarmActive;    
-public:
-    DoorServer(bool *pServerWork, bool *pAlarmActive,Condition *alarm, MySQL *pConnector);
-    DoorServer(const DoorServer& orig) = delete;
-    virtual ~DoorServer();
-private:
-    virtual void threadMain();
-    virtual void threadControl();
-
+    bool *alarmActive;
 };
 
 #endif /* DOORSERVER_H */

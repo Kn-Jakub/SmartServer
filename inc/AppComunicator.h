@@ -25,20 +25,23 @@
 #include "SecurityServer.h"
 #include "SecurityManager.h"
 
-
-class AppComunicator:public Thread, Modul {
+class AppComunicator : public Thread, Modul {
 public:
     AppComunicator(SERVER_DATA *data);
     virtual ~AppComunicator();
+
     AppComunicator(const AppComunicator& orig) = delete;
+    void operator=(const AppComunicator &right) = delete;
 private:
     void shutDown();
-    void operator=(const AppComunicator &right);
+
     virtual void threadMain();
+
     bool isUserAppDisconnect() const {
         return webServerConnect;
     }
 private:
+    bool* serverWork;
     LightServer *lightServer;
     TmpServer *tmpServer;
     Condition *alarmRunCondition;
@@ -49,7 +52,7 @@ private:
     Socket* webServerSocket;
     bool webServerConnect;
     SERVER_DATA* serverData;
-    bool* serverWork;
+
 };
 
 #endif /* APPCOMUNICATOR_H */

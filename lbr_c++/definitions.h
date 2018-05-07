@@ -80,7 +80,12 @@ extern "C" {
 //#define NO_MODULE           102
 //#define DATA_OK             103
 
-
+//server exceptions
+#define EX_PORT_WRONG_NUMBER    1
+#define EX_SOCK_CREATING        2
+#define EX_BIND                 3
+#define EX_ACCEPT               4
+#define EX_SOCK_ACCEPT          5
 
 
 typedef struct TMPData{

@@ -27,9 +27,26 @@ private:
     
 public:
     Light(Socket *socketDescriptor, string recvName, Condition* paConIsDisconnect, MySQL *paConnectorState);
-    void setStateOfLight(bool pLightOnstring,string light = " ");
+    /**
+    * Function set the state of light on module
+    * @param pLightOnstring - RGB code for LED diodes
+    * @param light - state of main light. True - turned on
+    */
+    void setStateOfLight(bool light,string pLightOnstring = " ");
+    /**
+    * Function send alert to module
+    */
     bool sendAlert();
+    /**
+    * Function activated alarm on the module
+    * @param start - value of security state, true - alarm is active
+    * @return true if set is successful, false otherwise
+    */
     bool setAlarm(bool start);
+    /**
+    * Function return name of module
+    * @return const string name of module
+    */
     string getName() const {return name;}
     virtual ~Light();
 private:

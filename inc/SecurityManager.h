@@ -19,25 +19,41 @@
 
 
 class SecurityManager: public Thread {
-    private:
+    
+public:
+    SecurityManager(bool *pServerWor,bool *alarmActive,LightServer *pLServer,MySQL *pConnector, Condition *runAlarm);
+    SecurityManager(const SecurityManager& orig) = delete;
+    virtual ~SecurityManager();
+    /**
+    * Function set the value of reaction time for alarm. It is time between alert sending and alarm sending.
+    * @param time - it is setting value
+    */
+    void setReactionTime(uint16_t time);
+    /**
+    * Function get the attribute value
+    * @return reaction time between alert sending and alarm sendig
+    */
+    uint16_t getReactionTime()const;
+     /**
+    * Function get the attribute value alarm state
+    * @return bool value od alarmState, true is active
+    */
+    bool getAlarmState()const;
+     /**
+    * Function set the attribute value alarmState
+    * @param pState - setting value
+    */
+    void setAlarmState(bool pState);
+private:
+    virtual void threadMain();
+private:
         bool *m_serverWork;
         bool *m_alarmActive;
         LightServer * m_ligthServer;
         Condition *m_runAlarm;
         Mutex *m_alarmMutex;
         uint16_t counterOfReactionAlarm;
-        MySQL *m_connetorToStateDB;
-public:
-    SecurityManager(bool *pServerWor,bool *alarmActive,LightServer *pLServer,MySQL *pConnector, Condition *runAlarm);
-    SecurityManager(const SecurityManager& orig) = delete;
-    virtual ~SecurityManager();
-    
-    void setReactionTime(uint16_t time);
-    uint16_t getReactionTime()const;
-    bool getAlarmState()const;
-    void setAlarmState(bool pState);
-private:
-    virtual void threadMain();
+        MySQL *m_connetorToStateDB;    
 };
 
 #endif /* SECURITYMANAGER_H */

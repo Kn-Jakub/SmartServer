@@ -114,7 +114,6 @@ void TmpServer::setPeriodOnSensor(std::string name, uint32_t period) {
 void TmpServer::threadControl() {
     aMutex->lock();
     while (*serverWork) {
-        //while (sensors.size() != 0) {
         conIsDisconnect->wait(aMutex);
         for (int i = (sensors.size() - 1); i >= 0; i--) {
             if (!*serverWork) {
@@ -125,7 +124,6 @@ void TmpServer::threadControl() {
                 sensors.erase(sensors.begin() + i);
             }
         }
-        //}
     }
     LOG_INFO("TMPServer::Ukoncujem threadControl");
     aMutex->unlock();

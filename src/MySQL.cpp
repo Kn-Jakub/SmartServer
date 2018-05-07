@@ -56,6 +56,15 @@ bool MySQL::initMysql(const char* paDbName) {
     return true;
 }
 
+bool MySQL::query(std::string& mysqlQuery) {
+    if(mysql_query(connector, mysqlQuery.c_str())){
+        LOG_ERROR("MYSQL:: can`t apply query", mysql_error(connector));
+        return false;
+    }
+    LOG_TRACE("MYSQL:: ", mysqlQuery);
+    return true;
+}
+
 
 bool MySQL::createInitialStateTable() {
     std::string SQLCommand;
@@ -108,7 +117,7 @@ bool MySQL::createTable(string nameOfSensor) {
     return true;
 }
 
-bool MySQL::setDefaultValue(uint16_t timePeriod, std::string logLevel, bool security) {
+bool MySQL::setDefaultValue(uint16_t timePeriod, std::string logLevel, bool security,uint16_t securityTime) {
     string SQLCommand;
     MYSQL_RES *result;
     bool help = false;
@@ -134,7 +143,8 @@ bool MySQL::setDefaultValue(uint16_t timePeriod, std::string logLevel, bool secu
         SQLCommand += to_string(timePeriod);
         SQLCommand += "', LogLevel = '";
         SQLCommand += logLevel;
-        SQLCommand += security ? "', SecurityState = true" : "', SecurityState  = false";
+        SQLCommand += security ? "', SecurityState = true, SecurityTime = '" : "', SecurityState  = false, SecurityTime = '";
+        SQLCommand += to_string(securityTime) + "'";
         LOG_DEBUG("MYSQL:: ", SQLCommand);
         if (mysql_query(connector, SQLCommand.c_str())) {
             LOG_ERROR("MYSQL:: Problem with setting of state sensor \n(Error:)", mysql_error(connector));
@@ -147,8 +157,8 @@ bool MySQL::setDefaultValue(uint16_t timePeriod, std::string logLevel, bool secu
         SQLCommand += to_string(timePeriod);
         SQLCommand += "','";
         SQLCommand += logLevel;
-        SQLCommand += string(security ? "',true" : "',false");
-        SQLCommand += ")";
+        SQLCommand += string(security ? "',true,'" : "',false,'");
+        SQLCommand += to_string(timePeriod) + "')";
         LOG_DEBUG("MYSQL:: ", SQLCommand);
         if (mysql_query(connector, SQLCommand.c_str())) {
             LOG_ERROR("MYSQL:: Problem with setting of state sensor\n(Error:)", mysql_error(connector));

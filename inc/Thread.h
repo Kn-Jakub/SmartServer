@@ -17,31 +17,35 @@
 #include <pthread.h>
 #include "../lbr_c++/definitions.h"
 class Thread
-{
-private:
-    pthread_t thread;
-    pthread_t threadControler;
-    
-    
+{ 
 public:
-   Thread() {/* empty */}
-   
-
-   /** Returns true if the thread was successfully started, false if there was an error starting the thread */
+   Thread(){ /*must be emty*/};
+   /**
+    * Function starts main thread with threadMain() function
+    * @return true if the thread was successfully started, false if there was an error starting the thread
+    */
    bool StartInternalThread()
    {
       return (pthread_create(&thread, NULL, InternalThreadEntryFunc, this) == 0);
    }
+   /**
+    * Function starts second thread with threadControl() function
+    * @return true if the thread was successfully started, false if there was an error starting the thread
+    */
    bool StartControlThread()
    {
       return (pthread_create(&threadControler, NULL, ControlThreadEntryFunc, this) == 0);
    }
-
-   /** Will not return until the internal thread has exited. */
+   /**
+    * Function is waiting until the internal thread has exited
+    */
    void WaitForInternalThreadToExit()
    {
       (void) pthread_join(thread, NULL);
    }
+   /**
+    * Function is waiting until the internal thread has exited
+    */
    void WaitForControlThreadToExit()
    {
       (void) pthread_join(threadControler, NULL);
@@ -63,6 +67,9 @@ private:
        ((Thread *)This)->threadControl(); 
        return NULL;
    }
+private:
+    pthread_t thread;
+    pthread_t threadControler;
 };
 
 #endif /* THREAD_H */

@@ -87,7 +87,6 @@ void SecurityServer::threadMain() {
 void SecurityServer::threadControl() {
     m_mutex->lock();
     while (*serverWork) {
-        //while (sensors.size() != 0) {
         m_conIsDisconnect->wait(m_mutex);
         for (int i = (sensors.size() - 1); i >= 0; i--) {
             if (!*serverWork) {
@@ -98,7 +97,6 @@ void SecurityServer::threadControl() {
                 sensors.erase(sensors.begin() + i);
             }
         }
-        //}
     }
     LOG_INFO("SECServer:: Ukoncujem threadControl");
     m_mutex->unlock();

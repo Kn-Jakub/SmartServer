@@ -14,8 +14,6 @@
 #ifndef LIGHTSERVER_H
 #define LIGHTSERVER_H
 
-//class SecurityServer;
-
 #include "Socket.h"
 #include "Mutex.h"
 #include "Light.h"
@@ -24,18 +22,27 @@
 #include <vector>
 
 class LightServer : public Thread{
-private:
-    Socket *serverSocket;
-    MySQL *connectorToState;
-    Mutex *aMutex;
-    Condition *conIsDisconnect;
-    vector <Light*> moduls;
-    bool *serverWork;
-    bool work;
 public:
     LightServer(bool *paServerWork, MySQL *paConnector);
+    virtual ~LightServer();
+    /**
+    * Function set the state of lights on the module
+    * @param state - RGB code for LED diodes
+    * @param lightOn - state of main light. True - turned on
+    * @param paNameSensor - name for identification of module
+    * @return true if set is successful, false otherwise
+    */
     bool setLight(string state,bool lightOn, string paNameSensor);
+    /**
+    * Function send alert to light modules
+    * @return true if alert is successful sended, false otherwise
+    */
     bool sendAlert();
+    /**
+    * Function actived alarm on all conected modules
+    * @param start - is state of alarm, true - alarm is actived
+    * @return true if alarm message is successful sended, false otherwise
+    */
     bool alarm(bool start);
     Light *getLight(std::string pName);
     
@@ -44,8 +51,15 @@ private:
     virtual void threadMain();
     virtual void threadControl();
     LightServer(const LightServer& orig) = delete;
-public:
-    virtual ~LightServer();
+
+private:
+    Socket *serverSocket;
+    MySQL *connectorToState;
+    Mutex *aMutex;
+    Condition *conIsDisconnect;
+    vector <Light*> moduls;
+    bool *serverWork;
+    bool work;
 };
 
 #endif /* LIGHTSERVER_H */

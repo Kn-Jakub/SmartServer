@@ -141,7 +141,6 @@ void LightServer::threadControl() {
 }
 
 LightServer::~LightServer() {
-    //LOG_WARN("LIGHTSserv:: Destruktor LightServer");
     WaitForInternalThreadToExit();
     WaitForControlThreadToExit();
     delete serverSocket;

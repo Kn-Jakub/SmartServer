@@ -27,6 +27,22 @@
 
 
 class TmpServer : public Thread{
+
+    
+public:
+    TmpServer(bool *paServerWork, MySQL *paConnector);
+    virtual ~TmpServer();
+    /**
+    * Function set the periode on the sensor from the vector
+    * @param name - name of tmp module
+    * @param period - value of setting period
+    */
+    void setPeriodOnSensor(std::string name, uint32_t period);
+    TmpServer(const TmpServer& orig) = delete;
+private:
+    void operator=(const TmpServer &right);
+    virtual void threadMain();
+    virtual void threadControl();
 private:
     Socket *serverSocket;
     Socket *serverSocketSettings;
@@ -38,20 +54,6 @@ private:
     bool *serverWork;
     bool work;
     
-public:
-    TmpServer(bool *paServerWork, MySQL *paConnector);
-    void setPeriodOnSensor(std::string name, uint32_t period);
-    TmpServer(const TmpServer& orig) = delete;
-private:
-    
-    void operator=(const TmpServer &right);
-    int getCountOfSensors(){return sensors.size();}
-    
-    
-    virtual void threadMain();
-    virtual void threadControl();
-public:
-    virtual ~TmpServer();
 };
 
 #endif /* TMPSERVER_H */

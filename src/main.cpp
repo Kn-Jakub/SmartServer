@@ -33,9 +33,9 @@ int main(int argc, char** argv) {
         bool serverWork = true;
         bool alarmActive = false;
         uint16_t timeForLight = 10;
-        globalData.g_conStateDB->setDefaultValue(timeForLight, "all", alarmActive);
+        globalData.g_conStateDB->setDefaultValue(timeForLight, "all", alarmActive,30);
 
-        globalData.g_controlCondition = new Condition();
+      //  globalData.g_controlCondition = new Condition();
         globalData.g_serverWork = &serverWork;
         globalData.g_alarmActive = &alarmActive;
         globalData.timeForLight = &timeForLight;
@@ -43,8 +43,8 @@ int main(int argc, char** argv) {
         AppComunicator* aplication = new AppComunicator(&globalData);
         delete aplication;
         delete globalData.g_conStateDB;
-        delete globalData.g_controlCondition;
-        delete globalData.g_controlMutex;
+        //delete globalData.g_controlCondition;
+        //delete globalData.g_controlMutex;
     } else {
         LOG_FATAL("MAIN:::I can`t run the server, because it doesn`t run MySQL" );
     }

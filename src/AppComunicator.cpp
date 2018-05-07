@@ -16,7 +16,8 @@
 #include <string>
 
 AppComunicator::AppComunicator(SERVER_DATA *pServerData)
-: lightServer(new LightServer(serverWork, pServerData->g_conStateDB)),
+: serverWork(pServerData->g_serverWork),
+        lightServer(new LightServer(serverWork, pServerData->g_conStateDB)),
 tmpServer(new TmpServer(serverWork, pServerData->g_conStateDB)),
 alarmRunCondition(new Condition()),
 securityManager(new SecurityManager(serverWork,pServerData->g_alarmActive,lightServer,pServerData->g_conStateDB,alarmRunCondition)),
@@ -24,14 +25,15 @@ secServer(new SecurityServer(serverWork,alarmRunCondition, pServerData->g_alarmA
 doorServer(new DoorServer(serverWork, pServerData->g_alarmActive, alarmRunCondition, pServerData->g_conStateDB)),
 webServerSocket(new Socket(PORT_WEB_SERVER)),
 webServerConnect(true),
-serverData(pServerData),
-serverWork(pServerData->g_serverWork)
+serverData(pServerData)
 {  
     name = "WebServer";
     LOG_DEBUG("APPCom:: Starting thread");
     StartInternalThread();
 }
-
+/*
+ * Hlavna funkcia vlakna v ktorej prebieha hlavna komunikacia s webServerom
+ */
 void AppComunicator::threadMain() {
     
     int returnValue;
@@ -43,6 +45,7 @@ void AppComunicator::threadMain() {
     string recvMsg;
     string data;
     string delimeter = "@";
+    std::string SQLQuery;
   
     webServerSocket->serverListen();
     
@@ -82,6 +85,7 @@ void AppComunicator::threadMain() {
                     break;
                 case REQV_SET_LOG_LEVEL:
                     recvMsg = string(bufferBig + 3);
+                    SQLQuery = "UPDATE initialstate SET LogLevel = '" + recvMsg + "', SvetloPerioda = '";
                     LOG_MESSAGE("APPCom::Nastavujem Log Level na: ",recvMsg);
                     if (recvMsg == "all"){
                         LOGGER_SET_LOG_LEVEL(LogLevelsEnum::ALL);
@@ -99,8 +103,9 @@ void AppComunicator::threadMain() {
                         LOGGER_SET_LOG_LEVEL(LogLevelsEnum::FATAL);
                     }
                     memcpy(serverData->timeForLight,bufferBig + 1,sizeof(uint16_t));
+                    SQLQuery += to_string(*serverData->timeForLight) + "'";
                     LOG_INFO("APPCom::Nastavujem periodu pre osvetlenie: ", to_string(*serverData->timeForLight));
-                    
+                    serverData->g_conStateDB->query(SQLQuery);
                     break;
                 case REQV_ALARM_CONTROL:
                     if(bufferBig[1] == '1'){
@@ -109,10 +114,15 @@ void AppComunicator::threadMain() {
                         *serverData ->g_alarmActive = false;
                         alarmRunCondition->signal();
                     }
+                    
                     uint16_t timeAlarmALert;
                     memcpy(&timeAlarmALert,bufferBig + 2,sizeof(uint16_t));
+                    SQLQuery = "UPDATE initialstate SET SecurityState = ";
+                    SQLQuery += *serverData->g_alarmActive ? "true" : "false";
+                    SQLQuery += " ,SecurityTime = '" + to_string(timeAlarmALert)+ "'";
                     securityManager->setReactionTime(timeAlarmALert);
-                    LOG_WARN("APPCom::Nastavujem alarmActive na ",serverData->g_alarmActive ? " aktivne" : " neaktivne"," a rakcny cas: ", to_string(timeAlarmALert));
+                    LOG_WARN("APPCom::Nastavujem alarmActive na ",*serverData->g_alarmActive ? " aktivne" : " neaktivne"," a reakcny cas: ", to_string(timeAlarmALert));
+                    serverData->g_conStateDB->query(SQLQuery);
                     break;
                 case REQV_SHUTDOWN_SERVER: //******************************************************************
                     LOG_WARN("APPCom::Pouzivatel vypina aplikaciu aj server");
@@ -139,7 +149,9 @@ void AppComunicator::threadMain() {
     }
 
 }
-
+/*
+ * Metoda pre bezpecne vypnutie servera
+ */
 void AppComunicator::shutDown() {
     Socket* shutDownTMP;
     Socket* shutDownLight;

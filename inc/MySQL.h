@@ -18,25 +18,50 @@
 #include "../lbr_c++/definitions.h"
 
 class MySQL {
-private:
+    private:
     MYSQL *connector;
-   // string dbName;
 public:
     MySQL();
+    /**
+    * Function initializes tho connector to the database
+    * @param paDbName - string of database name
+    * @return true if initialization is successful, false otherwise
+    */
     bool initMysql(const char* paDbName);
+    
+    bool query(std::string& mysqlQuery);
+    /**
+    * Function create the state table of server
+    * @return true if initialization is successful, false otherwise
+    */
     bool createInitialStateTable();
+    /**
+    * Function create the state table of module
+     * @param tableName - string of database name
+    * @return true if creating is successful, false otherwise
+    */
     bool createStateTable(std::string tableName);
+    /**
+    * Function create the temperature table for temperature module
+     * @param nameOfSensor - string of table name
+    * @return true if creating is successful, false otherwise
+    */
     bool createTable(std::string nameOfSensor);
-    bool insertTo(std::string nameTable, TMPData paData);
+    /**
+    * Function inserts the record to the temperature database
+     * @param tableName- string of table name
+     * @param pData- data entered into the database
+     * @return true if inserting is successful, false otherwise
+    */
+    bool insertTo(std::string tableName, TMPData paData);
     bool insertTo(std::string tableName, std::string sensorname, bool state,  bool lampOn, std::string light);
     bool insertTo(std::string tableName, std::string sensorname, bool state);
-    bool setDefaultValue(uint16_t timePeriod,std::string logLevel,bool security);
+    bool setDefaultValue(uint16_t timePeriod,std::string logLevel,bool security, uint16_t securityTime);
     std::string getValue(std::string tableName);
-    
     
     MySQL(const MySQL& orig) = delete;
     virtual ~MySQL();
-private:
+
 
 };
 

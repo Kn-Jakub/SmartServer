@@ -17,26 +17,30 @@
 #include "Mutex.h"
 
 class Condition{
-private:
-    pthread_cond_t pCondition;
 public:
     Condition(){
         pthread_cond_init(&pCondition,NULL);
     }
-    inline void signal(){
-        pthread_cond_signal(&pCondition);
-    }
-    inline void wait(Mutex* mutex){
-        pthread_cond_wait(&pCondition,mutex->getMutex());
-    }
-    /*inline void timedWait(Mutex* mutex){
-        pthread_cond_timedwait(&pCondition,mutex->getMutex(),);
-    }*/
     ~Condition() {
         pthread_cond_destroy(&pCondition);
     }
+     /**
+    * Function send signal into lock mutex
+    */
+    inline void signal(){
+        pthread_cond_signal(&pCondition);
+    }
+    /**
+    * Function set mutex to waiting state
+     * @param mutex - is object which represent Mutex
+    */
+    inline void wait(Mutex* mutex){
+        pthread_cond_wait(&pCondition,mutex->getMutex());
+    }
+private:
+    pthread_cond_t pCondition;    
+    
 };
-
 
 #endif /* CONDITION_H */
 

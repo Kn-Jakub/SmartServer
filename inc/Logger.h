@@ -96,58 +96,58 @@ public:
     void operator=(Logger const&) = delete;
     ~Logger() = default;
 
+    /**
+     * Function for writing logs to cout
+     * @param logLevel - level of log message
+     * @param level - level in string form
+     * @param time - time when the log was create
+     * @param logs - it is message from macro
+     */
+
     template<typename... T>
     void log(LogLevelsEnum logLevel, std::string level, time_t time, T... logs) {
         std::string logMessage;
         std::stringstream ss, ss2;
-        //ss << "[thread ID:" << threadId << "] ";
-        Log(ss, logs...);
-        struct tm tm = *localtime(&time);
-        ss2 << tm.tm_mday << "/" << \
- (tm.tm_mon + 1) << "/" << \
- (tm.tm_year + 1900) << " " << \
- tm.tm_hour << ":" << \
- tm.tm_min << ":" << \
- tm.tm_sec;
-
-        logMessage += ss2.str();
-        logMessage += " [";
-        logMessage += level;
-        logMessage += "] ";
-        logMessage += ss.str();
         if (logLevel >= logLevelFilter) {
+            Log(ss, logs...);
+            struct tm tm = *localtime(&time);
+            ss2 << tm.tm_mday << "/" << 
+ (tm.tm_mon + 1) << "/" << 
+ (tm.tm_year + 1900) << " " << 
+ tm.tm_hour << ":" << tm.tm_min << ":" << tm.tm_sec;
+
+            logMessage += ss2.str();
+            logMessage += " [";
+            logMessage += level;
+            logMessage += "] ";
+            logMessage += ss.str();
+
             std::cout << logMessage << std::endl;
         }
-        //                std::stringstream ss;
-        //                ss << "[thread ID:" << threadId << "] ";
-        //                FlexLog(ss, logs...);
-        //                ss << "\n";
-        //                
-        //                if (logLevel >= FLEX_LOG_LEVEL)
-        //                {
-        //                    //TODO
-        //                    std::cout << time << " " << "[" << level << "] " << ss.str();
-        //                }
-
-
     }
-
+    /**
+     * Function for writing message to cout, without log level filtering
+     * @param message - it is message from macro
+     */
     template<typename... T>
     void writeMessage(T... message) {
         std::stringstream ss;
         Log(ss, message...);
         std::cout << ss.str() << std::endl;
     }
+     /**
+     * Function set the maximal log level for logs filtering
+     * @param message - it is message from macro
+     */
     template<typename... T>
-    void setLogLevel( T... logs) {
-        
+    void setLogLevel(T... logs) {
+
         std::stringstream ss;
         Log(ss, logs...);
         uint8_t logLvl = std::stoi(ss.str().c_str());
-        
-        this->logLevelFilter = (int)logLvl;
+
+        this->logLevelFilter = (int) logLvl;
     }
-private:
 
 };
 
