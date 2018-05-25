@@ -89,7 +89,7 @@ bool MySQL::createStateTable(std::string tableName) {
     SQLCommand = "CREATE TABLE ";
     SQLCommand += tableName;
     SQLCommand += "(ID INT NOT NULL AUTO_INCREMENT, SensorName TEXT, State BOOLEAN, LastActivity TIMESTAMP, ";
-    if (!tableName.compare(DBTAB_LIGHT_MODULES)) SQLCommand += "LightColor TEXT, LampOn BOOLEAN, ";
+    if (!tableName.compare(DBTAB_LIGHT_MODULES)) SQLCommand += "LightColor TEXT, LampOn BOOLEAN, AutoLight BOOLEAN, ";
 
     SQLCommand += "PRIMARY KEY(ID))";
     LOG_TRACE("MYSQL:: ", SQLCommand);
@@ -105,9 +105,9 @@ bool MySQL::createStateTable(std::string tableName) {
 
 bool MySQL::createTable(string nameOfSensor) {
     string SQLCommand;
-    SQLCommand = "CREATE TABLE " ;
+    SQLCommand = "CREATE TABLE `" ;
     SQLCommand += nameOfSensor;
-    SQLCommand += " (ID INT NOT NULL AUTO_INCREMENT, Epoch TIMESTAMP, Temperature REAL, Humidity REAL, PRIMARY KEY(ID))";
+    SQLCommand += "` (ID INT NOT NULL AUTO_INCREMENT, Epoch TIMESTAMP, Temperature REAL, Humidity REAL, PRIMARY KEY(ID))";
     LOG_TRACE("MYSQL::", SQLCommand);
 
     if (mysql_query(connector, SQLCommand.c_str())) {
@@ -172,13 +172,13 @@ bool MySQL::setDefaultValue(uint16_t timePeriod, std::string logLevel, bool secu
 /*INSERT INTO TEMPERATURE TABLE*/
 bool MySQL::insertTo(string nameTable, TMPData data) {
     string SQLCommand;
-    SQLCommand += "INSERT INTO ";
+    SQLCommand += "INSERT INTO `";
     SQLCommand += nameTable;
-    SQLCommand += " VALUES(NULL, NOW(), ";
+    SQLCommand += "` VALUES(NULL, NOW(), ROUND(";
     SQLCommand += to_string(data.temperature);
-    SQLCommand += ", ";
+    SQLCommand += ",3), ROUND(";
     SQLCommand += to_string(data.humidity);
-    SQLCommand += ")";
+    SQLCommand += ",3))";
     LOG_TRACE("MYSQL::", SQLCommand);
     if (mysql_query(connector, SQLCommand.c_str())) {
         LOG_ERROR("MYSQL::", mysql_error(connector));
@@ -187,7 +187,7 @@ bool MySQL::insertTo(string nameTable, TMPData data) {
 
     return true;
 }
-
+/*Insert to ligth state database*/
 bool MySQL::insertTo(string tableName, string sensorname, bool state, bool lampOn, string light) {
     string SQLCommand;
     MYSQL_RES *result;
@@ -237,7 +237,7 @@ bool MySQL::insertTo(string tableName, string sensorname, bool state, bool lampO
         SQLCommand += ", NOW(),'";
         SQLCommand += light;
         SQLCommand += lampOn ? "',true" : "', false";
-        SQLCommand += ")";
+        SQLCommand += ",false)";
         LOG_DEBUG("MYSQL:: ", SQLCommand);
         if (mysql_query(connector, SQLCommand.c_str())) {
             LOG_ERROR("MYSQL:: Problem with setting of state sensor:", sensorname, "\n(Error:)", mysql_error(connector));

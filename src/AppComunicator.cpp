@@ -79,7 +79,7 @@ void AppComunicator::threadMain() {
                     uint16_t timeTmp;
                     memcpy(&timeTmp,bufferBig + 1,sizeof(uint16_t));
                     recvMsg =string(bufferBig + 3);
-                    LOG_INFO("APPCom::Nastavujem periodu pre teplotny senzor: ", to_string(timeTmp));
+                    LOG_INFO("APPCom::Nastavujem periodu pre teplotny senzor ",recvMsg,": ", to_string(timeTmp));
                     tmpServer->setPeriodOnSensor(recvMsg,timeTmp);
                     
                     break;
@@ -126,7 +126,7 @@ void AppComunicator::threadMain() {
                     break;
                 case REQV_SHUTDOWN_SERVER: //******************************************************************
                     LOG_WARN("APPCom::Pouzivatel vypina aplikaciu aj server");
-                    shutDown();
+                   // shutDown();
 
                     break;
                 case REQV_ASSIGNED_MVMTOLIGHT: //******************************************************************
@@ -151,7 +151,7 @@ void AppComunicator::threadMain() {
 }
 /*
  * Metoda pre bezpecne vypnutie servera
- */
+ *
 void AppComunicator::shutDown() {
     Socket* shutDownTMP;
     Socket* shutDownLight;
@@ -161,7 +161,7 @@ void AppComunicator::shutDown() {
     delete shutDownLight;
     delete shutDownTMP;
 
-}
+}*/
 
 AppComunicator::~AppComunicator() {
     WaitForInternalThreadToExit();

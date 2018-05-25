@@ -17,6 +17,7 @@
 #include <iostream>
 #include <sstream>
 #include <ctime>
+#include <string>
 
 //#ifndef LOG_LEVEL
 //#define LOG_LEVEL LogLevelsEnum::ALL
@@ -107,16 +108,42 @@ public:
     template<typename... T>
     void log(LogLevelsEnum logLevel, std::string level, time_t time, T... logs) {
         std::string logMessage;
-        std::stringstream ss, ss2;
+        std::stringstream ss;
         if (logLevel >= logLevelFilter) {
             Log(ss, logs...);
             struct tm tm = *localtime(&time);
-            ss2 << tm.tm_mday << "/" << 
- (tm.tm_mon + 1) << "/" << 
- (tm.tm_year + 1900) << " " << 
- tm.tm_hour << ":" << tm.tm_min << ":" << tm.tm_sec;
+            if(tm.tm_mday < 10){
+                logMessage = std::string("0") + std::to_string(tm.tm_mday);   
+            } else {
+                logMessage = std::to_string(tm.tm_mday);
+            }
+            
+            if(tm.tm_mon < 10){
+                logMessage += "/0" + std::to_string(tm.tm_mon +1);
+            } else {
+                logMessage += "/" + std::to_string(tm.tm_mon+1);
+            }
+            
+            logMessage += "/" + std::to_string(tm.tm_year +1900) + " ";
+            
+            if(tm.tm_hour < 10){
+                logMessage += std::to_string(tm.tm_hour);
+            } else {
+                logMessage += std::to_string(tm.tm_hour);
+            }
+            
+            if(tm.tm_min < 10){
+                logMessage += ":0" + std::to_string(tm.tm_min);
+            } else {
+                logMessage += ":" + std::to_string(tm.tm_min);
+            }
+             
+             if(tm.tm_sec < 10){
+                logMessage += ":0" + std::to_string(tm.tm_sec);
+            } else {
+                logMessage += ":" + std::to_string(tm.tm_sec);
+            }
 
-            logMessage += ss2.str();
             logMessage += " [";
             logMessage += level;
             logMessage += "] ";

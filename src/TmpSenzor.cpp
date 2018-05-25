@@ -89,9 +89,8 @@ void TmpSenzor::setPeriod(uint32_t period) {
     if(period){
         buff[0]=TMP_SET_PERIOD;
         memcpy(buff+1,&period,sizeof(period));
-        clientSocket2->send(buff,3);
+        clientSocket2->send(buff,5);
     } else {
-        //sendData.push_back(TMP_STOP_SENDING);
     }
     
 }

@@ -111,6 +111,8 @@ void LightServer::threadMain() {
                     }
 
                 } while (!correctName);
+                
+                LOG_TRACE("LightServer:: pridelene meno ",newName); 
                 aMutex->lock();
                 moduls.push_back(new Light(socketClient, newName, conIsDisconnect, connectorToState));
                 aMutex->unlock();

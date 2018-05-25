@@ -16,7 +16,7 @@
 #include "Logger.h"
 
 TmpServer::TmpServer(bool *paServerWork, MySQL *paConnector)
-:serverSocket(new Socket(PORT_TMP)),
+: serverSocket(new Socket(PORT_TMP)),
 serverSocketSettings(new Socket(PORT_TMP_2)),
 aMutex(new Mutex()),
 conIsDisconnect(new Condition()),
@@ -24,8 +24,7 @@ connectorToTmpDb(new MySQL()),
 connectorToStateDb(paConnector),
 sensors(),
 serverWork(paServerWork),
-work(true)
-{
+work(true) {
     connectorToTmpDb->initMysql(DB_SERVER_TEMPERATURE);
     StartInternalThread();
     StartControlThread();
@@ -47,43 +46,46 @@ void TmpServer::threadMain() {
 
     while (*serverWork) {
         clientDescriptor = serverSocket->connectClient();
-        
+
         int setingClient = serverSocketSettings->connectClient();
         varClient = new Socket(PORT_TMP, clientDescriptor);
-        counter =1;
+        counter = 1;
 
         if (*serverWork) {
             if (varClient->recieve(buffer, 1024)) {
-                recvName = string(buffer+1);
+                recvName = string(buffer + 1);
                 LOG_TRACE("TMPServer:: Obdrzal som meno ", recvName);
-                while((pos = recvName.find(' ')) != std::string::npos){
-                    recvName.replace(pos,1,"_");
+                while ((pos = recvName.find(' ')) != std::string::npos) {
+                    recvName.replace(pos, 1, "_");
                 }
                 newName = recvName;
-            }
-             do{
-                for (TmpSenzor* act : sensors) {
-                    if (act->getName() == newName) {
-                        LOG_INFO("TMPServer:: Obdrzal som neplatne meno generujem nove");
-                        if(pos = recvName.find('-') != std::string::npos)
-                            newName = recvName.substr(0,pos);
-                        newName += "-";
-                        newName += to_string(counter);
-                        counter++;
-                        correctName = false;
-                        break;
-                    }else {
-                        correctName = true;
-                    }
-                }
-                
-            }while (!correctName);
-                
-            aMutex->lock();
-            sensors.push_back(new TmpSenzor(varClient, newName, conIsDisconnect, connectorToTmpDb, connectorToStateDb, setingClient));
-            aMutex->unlock();
 
-            LOG_INFO("TMPServer::Pripojil sa novy senzor");
+                do {
+                    for (TmpSenzor* act : sensors) {
+                        if (act->getName() == newName) {
+                            LOG_INFO("TMPServer:: Obdrzal som neplatne meno generujem nove");
+                            if (pos = recvName.find('-') != std::string::npos) {
+                                newName = recvName.substr(0, pos);
+                            }
+                            newName += "-";
+                            newName += to_string(counter);
+                            counter++;
+                            correctName = false;
+                            break;
+                        } else {
+                            correctName = true;
+                        }
+                    }
+                } while (!correctName);
+                LOG_TRACE("TMPServer:: pridelene meno ", newName);
+                aMutex->lock();
+                sensors.push_back(new TmpSenzor(varClient, newName, conIsDisconnect, connectorToTmpDb, connectorToStateDb, setingClient));
+                aMutex->unlock();
+
+                LOG_INFO("TMPServer::Pripojil sa novy senzor");
+            } else {
+                LOG_INFO("TMPServer:: Nastala chyba pri inicializacii");
+            }
         }
     }
     LOG_INFO("TMPServer::Ukoncujem threadMain");
@@ -93,17 +95,17 @@ void TmpServer::threadMain() {
 void TmpServer::setPeriodOnSensor(std::string name, uint32_t period) {
     bool setSuccess = false;
     for (unsigned int i = 0; i < sensors.size(); i++) {
-       // if (sensors.at(i)->getName() == name) {
-            LOG_INFO("TMPServer:: nastavujem periodu %s, -> %d", sensors.at(i)->getName(), period);
-            sensors.at(i)->setPeriod(period);
-            setSuccess = true;
-           // break;
-      //  }
+         if (sensors.at(i)->getName() == name) {
+        LOG_INFO("TMPServer:: nastavujem periodu ",sensors.at(i)->getName(),", -> ", period);
+        sensors.at(i)->setPeriod(period);
+        setSuccess = true;
+        break;
+        }
     }
-    if (!setSuccess){
-        if(sensors.size() == 0){
+    if (!setSuccess) {
+        if (sensors.size() == 0) {
             LOG_INFO("TMPServer:: Server nema pripojeny ziaden senzor teploty");
-        }else{
+        } else {
             LOG_INFO("TMPServer:: senzor neexituje");
 
         }
