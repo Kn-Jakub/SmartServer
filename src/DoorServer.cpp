@@ -49,15 +49,12 @@ void DoorServer::threadMain() {
             counter =1;
             recvName = std::string(buffer + 1);
             LOG_TRACE("DoorServer: Obdrzal som meno ", recvName);
-            while((pos = recvName.find(' ')) != std::string::npos){
-                    recvName.replace(pos,1,"_");
-                }
             newName = recvName;
             do {
                 for (DoorSensor *act : sensors) {
                     if (act->getName() == newName) {
                         LOG_WARN("DoorServer:: meno je uz pouzite generujem nove");
-                        if(pos = recvName.find('-') != std::string::npos)
+                        if((pos = recvName.find('-')) != std::string::npos)
                             recvName = recvName.substr(0,pos);
                         newName = recvName;
                         newName += "-";

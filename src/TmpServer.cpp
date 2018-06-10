@@ -55,17 +55,21 @@ void TmpServer::threadMain() {
             if (varClient->recieve(buffer, 1024)) {
                 recvName = string(buffer + 1);
                 LOG_TRACE("TMPServer:: Obdrzal som meno ", recvName);
+                /*
                 while ((pos = recvName.find(' ')) != std::string::npos) {
                     recvName.replace(pos, 1, "_");
-                }
+                }*/
                 newName = recvName;
 
                 do {
                     for (TmpSenzor* act : sensors) {
                         if (act->getName() == newName) {
                             LOG_INFO("TMPServer:: Obdrzal som neplatne meno generujem nove");
-                            if (pos = recvName.find('-') != std::string::npos) {
+                            if ((pos = recvName.find('-')) != std::string::npos) {
+                                LOG_INFO("TMPServer:: HELP >> ", pos);
+                                
                                 newName = recvName.substr(0, pos);
+                                LOG_INFO("TMPServer:: HELP new name >> ", newName);
                             }
                             newName += "-";
                             newName += to_string(counter);

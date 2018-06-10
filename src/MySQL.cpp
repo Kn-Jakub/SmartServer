@@ -50,6 +50,14 @@ bool MySQL::initMysql(const char* paDbName) {
             createStateTable(DBTAB_TEMP_MODULES);
             createStateTable(DBTAB_LIGHT_MODULES);
             createStateTable(DBTAB_MVM_MODULES);
+            SQLCommand = "CREATE TABLE `activemodules`.`login` ( `ID` INT NOT NULL AUTO_INCREMENT , `Name` TEXT NOT NULL , `Password` TEXT NOT NULL , PRIMARY KEY (`ID`)) ENGINE = InnoDB";
+            mysql_query(connector, SQLCommand.c_str());
+            SQLCommand = "INSERT INTO `login` VALUES (NULL,'admin','admin')";
+           if( mysql_query(connector, SQLCommand.c_str())) {
+               LOG_WARN("MYSQL:: Nemozem vlozit login do databazy");
+                       
+           }
+           LOG_INFO("MYSQL::",SQLCommand); 
         }
     } 
     LOG_INFO("MYSQL::Connector was succesfully connected to database: ", paDbName);
@@ -89,7 +97,7 @@ bool MySQL::createStateTable(std::string tableName) {
     SQLCommand = "CREATE TABLE ";
     SQLCommand += tableName;
     SQLCommand += "(ID INT NOT NULL AUTO_INCREMENT, SensorName TEXT, State BOOLEAN, LastActivity TIMESTAMP, ";
-    if (!tableName.compare(DBTAB_LIGHT_MODULES)) SQLCommand += "LightColor TEXT, LampOn BOOLEAN, AutoLight BOOLEAN, ";
+    if (!tableName.compare(DBTAB_LIGHT_MODULES)) SQLCommand += "LightColor TEXT, LampOn BOOLEAN, MVMSensor TEXT, ";
 
     SQLCommand += "PRIMARY KEY(ID))";
     LOG_TRACE("MYSQL:: ", SQLCommand);
@@ -137,6 +145,7 @@ bool MySQL::setDefaultValue(uint16_t timePeriod, std::string logLevel, bool secu
         }
 
     } while (help);
+    
     if (result->row_count) {
         SQLCommand = "UPDATE initialstate";
         SQLCommand += " SET SvetloPerioda = '";
@@ -237,7 +246,7 @@ bool MySQL::insertTo(string tableName, string sensorname, bool state, bool lampO
         SQLCommand += ", NOW(),'";
         SQLCommand += light;
         SQLCommand += lampOn ? "',true" : "', false";
-        SQLCommand += ",false)";
+        SQLCommand += ",'')";
         LOG_DEBUG("MYSQL:: ", SQLCommand);
         if (mysql_query(connector, SQLCommand.c_str())) {
             LOG_ERROR("MYSQL:: Problem with setting of state sensor:", sensorname, "\n(Error:)", mysql_error(connector));

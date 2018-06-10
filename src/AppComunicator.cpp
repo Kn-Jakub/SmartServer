@@ -136,6 +136,10 @@ void AppComunicator::threadMain() {
                     data = recvMsg.substr(0, pos);
                     recvMsg.erase(0, pos + 1);
                     if(secServer->addConection(data,recvMsg)){
+                        
+                        SQLQuery = "UPDATE lightmodules SET MVMSensor = '" + data +"' WHERE SensorName = '" + recvMsg +"'";
+                         LOG_TRACE("APPCom::MYSQL::",SQLQuery);
+                        serverData->g_conStateDB->query(SQLQuery);
                         LOG_DEBUG("APPCom:: Svetlo uspesne priradene");
                     } else {
                         LOG_DEBUG("APPCom:: Nastala chyba pri priradovani, svetlo neexistuje");

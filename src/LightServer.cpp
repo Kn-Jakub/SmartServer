@@ -89,9 +89,6 @@ void LightServer::threadMain() {
             if (socketClient->recieve(buffer, BUFF_LENGTH)) {
                 recvName = string(buffer + 1);
                 LOG_TRACE("LIGHTserv:: Obdrzal som meno ", recvName);
-                while((pos = recvName.find(' ')) != std::string::npos){
-                    recvName.replace(pos,1,"_");
-                }
                 newName = recvName;
                 do {
                     for (Light *act : moduls) {

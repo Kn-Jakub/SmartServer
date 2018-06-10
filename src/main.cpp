@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
         bool alarmActive = false;
         uint16_t timeForLight = 10;
         globalData.g_conStateDB->setDefaultValue(timeForLight, "all", alarmActive,30);
-
+        
       //  globalData.g_controlCondition = new Condition();
         globalData.g_serverWork = &serverWork;
         globalData.g_alarmActive = &alarmActive;

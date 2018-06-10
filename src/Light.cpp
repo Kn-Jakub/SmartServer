@@ -75,7 +75,7 @@ void Light::threadMain() {
 }
 
 void Light::setStateOfLight( bool pLightOn, string pLightColor) {
-
+    string SQLQuery;
     string sendBuffer(1, (char) LIGHT_STATE_MESSAGE);
     lightOn = pLightOn;
     sendBuffer += lightOn ? string(1, 1) : string(1, 0);
@@ -88,7 +88,9 @@ void Light::setStateOfLight( bool pLightOn, string pLightColor) {
     LOG_INFO("LIGHT:: (", name, ") Nastavujem stav na: ", pLightOn, "  ", pLightColor);
     LOG_DEBUG("LIGHT:: (", name, ")Odosielane DATA: ", sendBuffer.c_str());
     modulSock->send((char*) sendBuffer.c_str(), sendBuffer.size());
-
+    SQLQuery = "UPDATE lightmodules SET LightColor = '" + pLightColor +"', LampOn = " + ((pLightOn)? "true," :"false,") +" MVMSensor = ''" + " WHERE SensorName = '" + name +"'";
+                         LOG_TRACE("APPCom::MYSQL::",SQLQuery);
+    connectorToState->query(SQLQuery);
 }
 
 bool Light::sendAlert() {

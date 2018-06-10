@@ -42,11 +42,11 @@ void DoorSensor::threadMain() {
     modulSock->send((uint8_t*) sendingBF.c_str(), sendingBF.size());
     
     /*Pripojenie DoorSensora a zapis do databazy*/
-    if (m_connectorToStateDB->insertTo(string(DBTAB_MVM_MODULES), name, true)) {
+   /* if (m_connectorToStateDB->insertTo(string(DBTAB_MVM_MODULES), name, true)) {
         LOG_DEBUG("Door:: (", name, ") Nastavujem stav v state databaze");
     } else {
         LOG_DEBUG("Door:: (", name, ") Vytvaram novy riadok v state databaze");
-    }
+    }*/
 
     while (!clientDisconnected) {
         if (modulSock->recieve(buffer, BUFF_LENGTH) > 0) {

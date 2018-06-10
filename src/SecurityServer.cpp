@@ -50,15 +50,12 @@ void SecurityServer::threadMain() {
             counter =1;
             recvName = std::string(buffer + 1);
             LOG_TRACE("SECServer:: Obdrzal som meno ", recvName);
-            while((pos = recvName.find(' ')) != std::string::npos){
-                    recvName.replace(pos,1,"_");
-                }
             newName = recvName;
             do {
                 for (MVMSensor *act : sensors) {
                     if (act->getName() == newName) {
                         LOG_WARN("SECServer:: meno je uz pouzite generujem nove");
-                        if(pos = recvName.find('-') != std::string::npos)
+                        if((pos = recvName.find('-')) != std::string::npos)
                             newName = recvName.substr(0,pos);
                         newName += "-";
                         newName += to_string(counter);
