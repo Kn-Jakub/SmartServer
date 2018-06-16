@@ -26,7 +26,7 @@ TmpSenzor::TmpSenzor(Socket* clientSocket,std::string pName, Condition *paCondit
 : connectorToTmpDb(paConnector),
 connectorToStateDb(paConnectToState),
 conIsDisconnect(paCondition),
-sendPeriod(5),
+sendPeriod(10),
 clientSocket2(new Socket(PORT_TMP_2,paSerSocket2)){
     // Connecting of Second socket TMP
     modulSock = clientSocket;

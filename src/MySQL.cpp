@@ -98,7 +98,7 @@ bool MySQL::createStateTable(std::string tableName) {
     SQLCommand += tableName;
     SQLCommand += "(ID INT NOT NULL AUTO_INCREMENT, SensorName TEXT, State BOOLEAN, LastActivity TIMESTAMP, ";
     if (!tableName.compare(DBTAB_LIGHT_MODULES)) SQLCommand += "LightColor TEXT, LampOn BOOLEAN, MVMSensor TEXT, ";
-
+    if (!tableName.compare(DBTAB_TEMP_MODULES)) SQLCommand += "SendPeriod INT, ";
     SQLCommand += "PRIMARY KEY(ID))";
     LOG_TRACE("MYSQL:: ", SQLCommand);
 
@@ -299,7 +299,9 @@ bool MySQL::insertTo(string tableName, string sensorname, bool state) {
         SQLCommand += " VALUES( NULL,'";
         SQLCommand += sensorname;
         SQLCommand += string(state ? "',true" : "',false");
-        SQLCommand += ", NOW())";
+        SQLCommand += ", NOW()";
+        if(!tableName.compare(DBTAB_TEMP_MODULES)) SQLCommand += ",10";
+        SQLCommand += ")";
 
         LOG_DEBUG("MYSQL:: ", SQLCommand);
         if (mysql_query(connector, SQLCommand.c_str())) {
