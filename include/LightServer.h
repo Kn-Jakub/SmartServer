@@ -17,7 +17,7 @@
 #include "Socket.h"
 #include "Mutex.h"
 #include "Light.h"
-#include "../lbr_c++/definitions.h"
+#include "Definitions.h"
 #include "MySQL.h"
 #include <vector>
 

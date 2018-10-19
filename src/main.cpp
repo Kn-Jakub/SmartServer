@@ -11,9 +11,9 @@
  */
 
 #include "AppComunicator.h"
-#include "../lbr_c++/definitions.h"
+#include "Definitions.h"
 #include "Logger.h"
-#include "globalData.h"
+#include "GlobalData.h"
 #include <unistd.h>
 #include <cstdlib>
 using namespace std;

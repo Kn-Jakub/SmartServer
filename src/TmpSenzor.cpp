@@ -13,7 +13,6 @@
 
 #include "TmpSenzor.h"
 #include "Socket.h"
-#include "../lbr_c++/definitions.h"
 #include "Logger.h"
 
 #include <cstring>

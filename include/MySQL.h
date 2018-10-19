@@ -13,9 +13,10 @@
 
 #ifndef MYSQL_H
 #define MYSQL_H
+#include "Definitions.h"
 #include <mysql.h>
 #include <string>
-#include "../lbr_c++/definitions.h"
+
 
 class MySQL {
     private:

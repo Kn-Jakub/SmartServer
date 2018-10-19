@@ -6,7 +6,7 @@
 
 /* 
  * File:   Thread.h
- * Author: JosoP
+ * Author: Jakub Pekar
  *
  * Created on Utorok, 2017, decembra 19, 11:47
  */

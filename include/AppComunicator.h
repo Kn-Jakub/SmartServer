@@ -20,8 +20,8 @@
 #include "DoorServer.h"
 #include "Modul.h"
 #include "MySQL.h"  
-#include "../lbr_c++/definitions.h"
-#include "globalData.h"
+#include "Definitions.h"
+#include "GlobalData.h"
 #include "SecurityServer.h"
 #include "SecurityManager.h"
 

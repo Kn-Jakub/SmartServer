@@ -12,7 +12,6 @@
  */
 
 #include "TmpServer.h"
-#include "../lbr_c++/definitions.h"
 #include "Logger.h"
 
 TmpServer::TmpServer(bool *paServerWork, MySQL *paConnector)

@@ -16,7 +16,7 @@
 
 #include <string>
 #include "Socket.h"
-#include "../lbr_c++/definitions.h"
+#include "Definitions.h"
 
 class Modul {
 public:

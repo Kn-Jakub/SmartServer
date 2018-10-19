@@ -5,7 +5,7 @@
  */
 
 /* 
- * File:   globalData.h
+ * File:   GlobalData.h
  * Author: jakub
  *
  * Created on March 26, 2018, 9:08 PM

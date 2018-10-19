@@ -15,7 +15,7 @@
 #define THREAD_H
 
 #include <pthread.h>
-#include "../lbr_c++/definitions.h"
+#include "Definitions.h"
 class Thread
 { 
 public:

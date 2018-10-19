@@ -12,7 +12,7 @@
 
 #ifndef LIGHT_H
 #define LIGHT_H
-#include "../lbr_c++/definitions.h"
+#include "Definitions.h"
 #include "Thread.h"
 #include "Modul.h"
 #include "Condition.h"

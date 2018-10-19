@@ -5,7 +5,7 @@
  */
 
 /* 
- * File:   definitions.h
+ * File:   Definitions.h
  * Author: Jakub Pekar
  *
  * Created on Pondelok, 2017, decembra 18, 9:30
@@ -37,6 +37,7 @@ extern "C" {
 #define COUNT_OF_LIGHTS         4
 #define SIZE_OF_REOCRDS         50    
 #define INIT                    112
+
     /******  Comunication mesgType from WebServer  *******/
 #define REQV_SET_LIGHT_STATE    0
 #define REQV_SET_TMP_PERIOD     1
@@ -68,7 +69,7 @@ extern "C" {
 #define ANS_ACK                 20
     
 #define OK                      10
-/*Database dafine constant*/
+/*Database define constant*/
 #define DB_ACTIVE_MODULE "activemodules"
 #define DBTAB_LIGHT_MODULES  "lightmodules"
 #define DB_SERVER_TEMPERATURE "servertemperatures"

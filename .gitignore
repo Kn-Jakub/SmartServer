@@ -34,6 +34,10 @@
 # Dirs
 build/
 nbproject/
+.kdev4/
 CMakeFiles/
 ext/
 
+# Own settings
+*.kdev4
+*.directory

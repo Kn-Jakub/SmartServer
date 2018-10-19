@@ -21,7 +21,7 @@
 #include <vector>
 #include "Thread.h"
 #include "Modul.h"
-#include "../lbr_c++/definitions.h"
+#include "Definitions.h"
 #include "Condition.h"
 #include "MySQL.h"
 

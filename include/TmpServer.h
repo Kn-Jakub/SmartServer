@@ -20,7 +20,7 @@
 #include "Mutex.h"
 #include "TmpSenzor.h"
 #include "Modul.h"
-#include "../lbr_c++/definitions.h"
+#include "Definitions.h"
 #include "Condition.h"
 #include <vector>
 #include "MySQL.h"
